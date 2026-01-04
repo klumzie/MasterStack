@@ -1,0 +1,147 @@
+version: '3.8'
+
+x-mcp-defaults: &mcp-defaults
+  restart: unless-stopped
+  networks:
+    - mcp-network
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+  healthcheck:
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 40s
+
+services:
+  mcp-network:
+    <<: *mcp-defaults
+    build: ./mcp-servers/network
+    container_name: mcp-network
+    environment:
+      - UNIFI_HOST=${UNIFI_HOST}
+      - UNIFI_USERNAME=${UNIFI_USERNAME}
+      - UNIFI_PASSWORD=${UNIFI_PASSWORD}
+      - UNIFI_PORT=${UNIFI_PORT:-8443}
+      - UNIFI_VERIFY_SSL=${UNIFI_VERIFY_SSL:-false}
+    ports:
+      - "8001:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-virtualization:
+    <<: *mcp-defaults
+    build: ./mcp-servers/virtualization
+    container_name: mcp-virtualization
+    environment:
+      - PROXMOX_HOST=${PROXMOX_HOST}
+      - PROXMOX_USER=${PROXMOX_USER}
+      - PROXMOX_TOKEN_NAME=${PROXMOX_TOKEN_NAME}
+      - PROXMOX_TOKEN_VALUE=${PROXMOX_TOKEN_VALUE}
+      - PROXMOX_VERIFY_SSL=${PROXMOX_VERIFY_SSL:-false}
+    ports:
+      - "8002:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-homeautomation:
+    <<: *mcp-defaults
+    build: ./mcp-servers/homeautomation
+    container_name: mcp-homeautomation
+    environment:
+      - HA_URL=${HA_URL}
+      - HA_TOKEN=${HA_TOKEN}
+    ports:
+      - "8003:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-workflows:
+    <<: *mcp-defaults
+    build: ./mcp-servers/workflows
+    container_name: mcp-workflows
+    environment:
+      - N8N_HOST=${N8N_HOST}
+      - N8N_API_KEY=${N8N_API_KEY}
+    ports:
+      - "8004:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-containers:
+    <<: *mcp-defaults
+    build: ./mcp-servers/containers
+    container_name: mcp-containers
+    environment:
+      - DOCKER_HOST=${DOCKER_HOST:-unix:///var/run/docker.sock}
+      - PORTAINER_URL=${PORTAINER_URL}
+      - PORTAINER_API_KEY=${PORTAINER_API_KEY}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8005:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-gaming:
+    <<: *mcp-defaults
+    build: ./mcp-servers/gaming
+    container_name: mcp-gaming
+    environment:
+      - MINECRAFT_SERVERS=${MINECRAFT_SERVERS}
+    ports:
+      - "8006:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-media-server:
+    <<: *mcp-defaults
+    build: ./mcp-servers/media-server
+    container_name: mcp-media-server
+    environment:
+      - PLEX_URL=${PLEX_URL}
+      - PLEX_TOKEN=${PLEX_TOKEN}
+    ports:
+      - "8007:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-downloads:
+    <<: *mcp-defaults
+    build: ./mcp-servers/downloads
+    container_name: mcp-downloads
+    environment:
+      - QBITTORRENT_HOST=${QBITTORRENT_HOST}
+      - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+      - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+    ports:
+      - "8008:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+  mcp-media-management:
+    <<: *mcp-defaults
+    build: ./mcp-servers/media-management
+    container_name: mcp-media-management
+    environment:
+      - SONARR_URL=${SONARR_URL}
+      - SONARR_API_KEY=${SONARR_API_KEY}
+      - RADARR_URL=${RADARR_URL}
+      - RADARR_API_KEY=${RADARR_API_KEY}
+      - LIDARR_URL=${LIDARR_URL:-}
+      - LIDARR_API_KEY=${LIDARR_API_KEY:-}
+      - PROWLARR_URL=${PROWLARR_URL:-}
+      - PROWLARR_API_KEY=${PROWLARR_API_KEY:-}
+      - READARR_URL=${READARR_URL:-}
+      - READARR_API_KEY=${READARR_API_KEY:-}
+    ports:
+      - "8009:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+
+networks:
+  mcp-network:
+    driver: bridge
+    name: mcp-network
