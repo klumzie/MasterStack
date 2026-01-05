@@ -13,8 +13,9 @@ COPY server.py .
 # Expose MCP server port
 EXPOSE 8000
 
-# Health check - verify Python process is running
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD pgrep -f python || exit 1
+# Health check - verify container is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD test -f /app/server.py || exit 1
 
-CMD ["python", "server.py"]
+# Keep container running (MCP server starts via docker exec)
+CMD ["tail", "-f", "/dev/null"]
