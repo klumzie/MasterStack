@@ -1,10 +1,10 @@
 # MCP Homelab Stack
 
-A comprehensive Model Context Protocol (MCP) server stack for managing your entire homelab infrastructure through Claude AI and voice commands via Home Assistant.
+A comprehensive Model Context Protocol (MCP) server stack for managing your entire homelab infrastructure through Claude AI, Ollama, and voice commands via Home Assistant.
 
 ## 🏗️ Architecture
 
-This stack provides MCP servers for all your homelab services, allowing Claude AI to interact with:
+This stack provides MCP servers for all your homelab services, allowing Claude AI and Ollama to interact with:
 
 - **Network Management** (Unifi): Devices, clients, WiFi networks
 - **Virtualization** (Proxmox): VMs, containers, snapshots  
@@ -44,6 +44,19 @@ This stack provides MCP servers for all your homelab services, allowing Claude A
    docker-compose ps
    ```
 
+## 🤖 AI Integration
+
+### Claude AI
+Use the MCP servers directly with Claude Desktop by configuring them in your Claude settings.
+
+### Ollama (Local LLMs)
+The stack includes **ollama-mcp-bridge** which makes all your homelab tools available to Ollama and any Ollama-compatible interface. This means you can:
+- Use local LLMs (Llama, Mistral, etc.) to control your homelab
+- Keep everything private and local
+- Use any Ollama-compatible UI (Open WebUI, etc.)
+
+See [OLLAMA_INTEGRATION.md](docs/OLLAMA_INTEGRATION.md) for detailed setup and usage.
+
 ## 📋 Service Ports
 
 Each MCP server runs on a dedicated port:
@@ -57,6 +70,7 @@ Each MCP server runs on a dedicated port:
 - **mcp-media-server**: 8007 (Plex)
 - **mcp-downloads**: 8008 (qBittorrent)
 - **mcp-media-management**: 8009 (Arr Suite)
+- **ollama-mcp-bridge**: 8010 (Ollama API with MCP tools)
 
 ## 🔧 Configuration
 

@@ -16,7 +16,12 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null; then
+# Detect Docker Compose version (V1 or V2)
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+else
     echo "❌ Docker Compose is not installed. Please install Docker Compose first."
     exit 1
 fi
@@ -37,7 +42,7 @@ if [ ! -f .env ]; then
 fi
 
 echo "🔧 Validating configuration..."
-if docker-compose config > /dev/null 2>&1; then
+if $DOCKER_COMPOSE config > /dev/null 2>&1; then
     echo "✅ Configuration is valid"
 else
     echo "❌ Configuration has errors. Please check your docker-compose.yml and .env file."
@@ -46,11 +51,11 @@ fi
 
 echo ""
 echo "🏗️  Building containers..."
-docker-compose build
+$DOCKER_COMPOSE build
 
 echo ""
 echo "🚀 Starting services..."
-docker-compose up -d
+$DOCKER_COMPOSE up -d
 
 echo ""
 echo "⏳ Waiting for services to start (30 seconds)..."
@@ -70,6 +75,7 @@ services=(
   "8007:MediaServer"
   "8008:Downloads"
   "8009:MediaManagement"
+  "8010:OllamaBridge"
 )
 
 all_healthy=true
@@ -93,21 +99,23 @@ if [ "$all_healthy" = true ]; then
     echo ""
     echo "Next steps:"
     echo "1. Configure Claude AI to use these MCP servers"
-    echo "2. Set up Home Assistant voice commands"
-    echo "3. Create N8N workflows"
+    echo "2. Use Ollama at http://localhost:8010 (with all MCP tools)"
+    echo "3. Set up Home Assistant voice commands"
+    echo "4. Create N8N workflows"
     echo ""
     echo "📚 See docs/SETUP.md for detailed configuration"
+    echo "📚 See docs/OLLAMA_INTEGRATION.md for Ollama usage"
 else
     echo "⚠️  Some services are unhealthy. Check logs with:"
-    echo "   docker-compose logs [service-name]"
+    echo "   $DOCKER_COMPOSE logs [service-name]"
     echo ""
     echo "📚 See docs/TROUBLESHOOTING.md for help"
 fi
 
 echo ""
 echo "Useful commands:"
-echo "  docker-compose ps              - View service status"
-echo "  docker-compose logs -f         - Follow all logs"
-echo "  docker-compose logs [service]  - View specific service logs"
-echo "  docker-compose restart         - Restart all services"
-echo "  docker-compose down            - Stop all services"
+echo "  $DOCKER_COMPOSE ps              - View service status"
+echo "  $DOCKER_COMPOSE logs -f         - Follow all logs"
+echo "  $DOCKER_COMPOSE logs [service]  - View specific service logs"
+echo "  $DOCKER_COMPOSE restart         - Restart all services"
+echo "  $DOCKER_COMPOSE down            - Stop all services"

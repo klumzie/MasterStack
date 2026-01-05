@@ -1,0 +1,91 @@
+{
+  "mcpServers": {
+    "homelab-network": {
+      "command": "python",
+      "args": ["/mcp-servers/network/server.py"],
+      "env": {
+        "UNIFI_HOST": "${UNIFI_HOST}",
+        "UNIFI_USERNAME": "${UNIFI_USERNAME}",
+        "UNIFI_PASSWORD": "${UNIFI_PASSWORD}",
+        "UNIFI_PORT": "${UNIFI_PORT}",
+        "UNIFI_VERIFY_SSL": "${UNIFI_VERIFY_SSL}"
+      }
+    },
+    "homelab-virtualization": {
+      "command": "python",
+      "args": ["/mcp-servers/virtualization/server.py"],
+      "env": {
+        "PROXMOX_HOST": "${PROXMOX_HOST}",
+        "PROXMOX_USER": "${PROXMOX_USER}",
+        "PROXMOX_TOKEN_NAME": "${PROXMOX_TOKEN_NAME}",
+        "PROXMOX_TOKEN_VALUE": "${PROXMOX_TOKEN_VALUE}",
+        "PROXMOX_VERIFY_SSL": "${PROXMOX_VERIFY_SSL}"
+      }
+    },
+    "homelab-automation": {
+      "command": "python",
+      "args": ["/mcp-servers/homeautomation/server.py"],
+      "env": {
+        "HA_URL": "${HA_URL}",
+        "HA_TOKEN": "${HA_TOKEN}"
+      }
+    },
+    "homelab-workflows": {
+      "command": "python",
+      "args": ["/mcp-servers/workflows/server.py"],
+      "env": {
+        "N8N_HOST": "${N8N_HOST}",
+        "N8N_API_KEY": "${N8N_API_KEY}"
+      }
+    },
+    "homelab-containers": {
+      "command": "python",
+      "args": ["/mcp-servers/containers/server.py"],
+      "env": {
+        "DOCKER_HOST": "${DOCKER_HOST}",
+        "PORTAINER_URL": "${PORTAINER_URL}",
+        "PORTAINER_API_KEY": "${PORTAINER_API_KEY}"
+      }
+    },
+    "homelab-gaming": {
+      "command": "python",
+      "args": ["/mcp-servers/gaming/server.py"],
+      "env": {
+        "MINECRAFT_SERVERS": "${MINECRAFT_SERVERS}"
+      }
+    },
+    "homelab-media": {
+      "command": "python",
+      "args": ["/mcp-servers/media-server/server.py"],
+      "env": {
+        "PLEX_URL": "${PLEX_URL}",
+        "PLEX_TOKEN": "${PLEX_TOKEN}"
+      }
+    },
+    "homelab-downloads": {
+      "command": "python",
+      "args": ["/mcp-servers/downloads/server.py"],
+      "env": {
+        "QBITTORRENT_HOST": "${QBITTORRENT_HOST}",
+        "QBITTORRENT_USERNAME": "${QBITTORRENT_USERNAME}",
+        "QBITTORRENT_PASSWORD": "${QBITTORRENT_PASSWORD}"
+      }
+    },
+    "homelab-media-mgmt": {
+      "command": "python",
+      "args": ["/mcp-servers/media-management/server.py"],
+      "env": {
+        "SONARR_URL": "${SONARR_URL}",
+        "SONARR_API_KEY": "${SONARR_API_KEY}",
+        "RADARR_URL": "${RADARR_URL}",
+        "RADARR_API_KEY": "${RADARR_API_KEY}",
+        "LIDARR_URL": "${LIDARR_URL}",
+        "LIDARR_API_KEY": "${LIDARR_API_KEY}",
+        "PROWLARR_URL": "${PROWLARR_URL}",
+        "PROWLARR_API_KEY": "${PROWLARR_API_KEY}",
+        "READARR_URL": "${READARR_URL}",
+        "READARR_API_KEY": "${READARR_API_KEY}"
+      }
+    }
+  }
+}
