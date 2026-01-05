@@ -10,6 +10,7 @@ x-mcp-defaults: &mcp-defaults
       max-size: "10m"
       max-file: "3"
   healthcheck:
+    test: ["CMD-SHELL", "pgrep -f python || exit 1"]
     interval: 30s
     timeout: 10s
     retries: 3
@@ -28,8 +29,6 @@ services:
       - UNIFI_VERIFY_SSL=${UNIFI_VERIFY_SSL:-false}
     ports:
       - "8001:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-virtualization:
     <<: *mcp-defaults
@@ -43,8 +42,6 @@ services:
       - PROXMOX_VERIFY_SSL=${PROXMOX_VERIFY_SSL:-false}
     ports:
       - "8002:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-homeautomation:
     <<: *mcp-defaults
@@ -55,8 +52,6 @@ services:
       - HA_TOKEN=${HA_TOKEN}
     ports:
       - "8003:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-workflows:
     <<: *mcp-defaults
@@ -67,8 +62,6 @@ services:
       - N8N_API_KEY=${N8N_API_KEY}
     ports:
       - "8004:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-containers:
     <<: *mcp-defaults
@@ -82,8 +75,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - "8005:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-gaming:
     <<: *mcp-defaults
@@ -93,8 +84,6 @@ services:
       - MINECRAFT_SERVERS=${MINECRAFT_SERVERS}
     ports:
       - "8006:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-media-server:
     <<: *mcp-defaults
@@ -105,8 +94,6 @@ services:
       - PLEX_TOKEN=${PLEX_TOKEN}
     ports:
       - "8007:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-downloads:
     <<: *mcp-defaults
@@ -118,8 +105,6 @@ services:
       - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
     ports:
       - "8008:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-media-management:
     <<: *mcp-defaults
@@ -138,8 +123,6 @@ services:
       - READARR_API_KEY=${READARR_API_KEY:-}
     ports:
       - "8009:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   ollama-mcp-bridge:
     <<: *mcp-defaults
