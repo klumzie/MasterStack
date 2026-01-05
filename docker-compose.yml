@@ -9,12 +9,12 @@ x-mcp-defaults: &mcp-defaults
     options:
       max-size: "10m"
       max-file: "3"
-  healthcheck:
-    test: ["CMD-SHELL", "test -f /app/server.py || exit 1"]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+  # healthcheck:
+  #   test: ["CMD-SHELL", "test -f /app/server.py || exit 1"]
+  #   interval: 30s
+  #   timeout: 10s
+  #   retries: 3
+  #   start_period: 10s
 
 services:
   mcp-network:
@@ -174,8 +174,8 @@ services:
       - "8010:8000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
     command: ["ollama-mcp-bridge", "--host", "0.0.0.0", "--port", "8000", "--config", "/app/config/mcp-config.json", "--ollama-url", "${OLLAMA_URL:-http://host.docker.internal:11434}"]
 
 networks:
