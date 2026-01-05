@@ -52,8 +52,6 @@ services:
       - HA_TOKEN=${HA_TOKEN}
     ports:
       - "8003:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
 
   mcp-workflows:
     <<: *mcp-defaults
