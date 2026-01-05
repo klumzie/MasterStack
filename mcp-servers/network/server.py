@@ -10,8 +10,13 @@ import logging
 from typing import Any
 import httpx
 from mcp.server import Server
-from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+import uvicorn
+from starlette.applications import Starlette
+from starlette.routing import Route
+from mcp.server.sse import SseServerTransport
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -290,11 +295,26 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         logger.error(f"Tool execution failed: {e}")
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def main():
-    """Run the MCP server"""
-    logger.info("Starting MCP Network Server (Unifi)")
-    async with stdio_server() as (read_stream, write_stream):
+async def health_check(request):
+    """Health check endpoint"""
+    return JSONResponse({"status": "healthy"})
+
+async def handle_sse(request):
+    """Handle SSE connections for MCP"""
+    transport = SseServerTransport("/messages")
+    async with transport.connect_sse(request.scope, request.receive, request._send) as (read_stream, write_stream):
         await app.run(read_stream, write_stream, app.create_initialization_options())
 
+def create_app():
+    """Create Starlette app"""
+    return Starlette(
+        debug=True,
+        routes=[
+            Route("/health", health_check),
+            Route("/sse", handle_sse),
+        ],
+    )
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    logger.info("Starting MCP Network Server (Unifi) on port 8000")
+    uvicorn.run(create_app(), host="0.0.0.0", port=8000)
