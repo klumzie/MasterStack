@@ -27,11 +27,19 @@ class ContainerClient:
     """Docker/Portainer API Client"""
 
     def __init__(self):
-        self.docker_client = docker.from_env()
+        self._docker_client = None
         self.portainer_url = PORTAINER_URL
         self.portainer_headers = {
             "X-API-Key": PORTAINER_API_KEY
         }
+
+    @property
+    def docker_client(self):
+        """Lazy-load Docker client connection"""
+        if self._docker_client is None:
+            logger.info(f"Connecting to Docker at {DOCKER_HOST}")
+            self._docker_client = docker.from_env()
+        return self._docker_client
 
     def get_containers(self, all_containers=True):
         """Get all containers"""
@@ -67,9 +75,9 @@ class ContainerClient:
         stats = container.stats(stream=False)
         return stats
 
-# Create MCP server
+# Create MCP server and client (lazy-loaded)
 app = Server("mcp-containers")
-container_client = ContainerClient()
+container_client = ContainerClient()  # Won't connect until first use
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:

@@ -26,11 +26,19 @@ class QBittorrentClient:
     """qBittorrent API Client"""
 
     def __init__(self):
-        self.client = Client(
-            host=QBITTORRENT_HOST,
-            username=QBITTORRENT_USERNAME,
-            password=QBITTORRENT_PASSWORD
-        )
+        self._client = None
+
+    @property
+    def client(self):
+        """Lazy-load qBittorrent client connection"""
+        if self._client is None:
+            logger.info(f"Connecting to qBittorrent at {QBITTORRENT_HOST}")
+            self._client = Client(
+                host=QBITTORRENT_HOST,
+                username=QBITTORRENT_USERNAME,
+                password=QBITTORRENT_PASSWORD
+            )
+        return self._client
 
     def get_torrents(self, filter_status: str = None):
         """Get all torrents"""
@@ -59,9 +67,9 @@ class QBittorrentClient:
         """Get global transfer statistics"""
         return self.client.transfer_info()
 
-# Create MCP server
+# Create MCP server and client (lazy-loaded)
 app = Server("mcp-downloads")
-qbit = QBittorrentClient()
+qbit = QBittorrentClient()  # Won't connect until first use
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:

@@ -25,7 +25,15 @@ class PlexClient:
     """Plex Media Server Client"""
 
     def __init__(self):
-        self.plex = PlexServer(PLEX_URL, PLEX_TOKEN)
+        self._plex = None
+
+    @property
+    def plex(self):
+        """Lazy-load Plex connection"""
+        if self._plex is None:
+            logger.info(f"Connecting to Plex at {PLEX_URL}")
+            self._plex = PlexServer(PLEX_URL, PLEX_TOKEN)
+        return self._plex
 
     def get_libraries(self):
         """Get all libraries"""
@@ -57,9 +65,9 @@ class PlexClient:
         """Search for media"""
         return self.plex.library.search(query)
 
-# Create MCP server
+# Create MCP server and client (lazy-loaded)
 app = Server("mcp-media-server")
-plex = PlexClient()
+plex = PlexClient()  # Won't connect until first use
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
